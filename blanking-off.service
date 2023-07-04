@@ -1,0 +1,10 @@
+[Unit]
+Description="Screen blanking, saver off"
+[Service]
+Environment=DISPLAY=:0.0
+Environment=XAUTHORITY=/home/ccoupe/.Xauthority
+ExecStart=/home/ccoupe/.local/bin/blanking-off.sh
+Restart=on-abort
+
+[Install]
+WantedBy=default.target

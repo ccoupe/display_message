@@ -1,0 +1,16 @@
+{
+    "mqtt_server_ip": "stoic.local",
+    "mqtt_port": 1883,
+    "mqtt_client_name": "bronco dpymsg",
+    "homie_device": "bronco_dpymsg",
+    "homie_name": "Python DpyMsg",
+    "notecmd_sub": "homie/test_display/display/cmd/set",
+    "notetext_sub": "homie/test_display/display/text/set",
+    "font1": "DejaVuSans",
+    "font1sz": [60 ,48],
+    "font2sz": [56,48],
+    "font3sz": [40,24],
+    "stroke_fill": "red",
+    "Default_Font": 1,
+    "fullscreen": false
+}
