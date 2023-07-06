@@ -138,7 +138,12 @@ class TkMessageDevice:
     self.log.info(f'lnY: {self.lnY}')
     
   def set_stroke(self, color_str):
+    self.log.info(f"Setting stroke to {color_str}")
     self.stroke_fill = color_str
+  
+  def set_timeout(self, tmo):
+    self.log.info(f"Setting blank time to {tmo}")
+    self.blank_minutes = int(tmo)
     
   # --------- Private methods below ----------------------
       

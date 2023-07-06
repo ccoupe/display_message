@@ -10,7 +10,7 @@
     "font1sz": [60 ,48],
     "font2sz": [56,48],
     "font3sz": [40,24],
-    "stroke_fill": "red",
+    "stroke_fill": "white",
     "Default_Font": 1,
     "fullscreen": false
 }

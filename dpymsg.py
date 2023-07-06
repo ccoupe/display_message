@@ -24,47 +24,17 @@ import sys
 isOSX = False
 settings = None
 hmqtt = None
-mq_thr = None         # Thread for mqtt 
-env_home = None       # env['HOME'] (/home/ccoupe)
-os_home = None        # where this script started (/usr/local/lib/tblogin)
-mainwin = None        # First Toplevel of root.
-content = None        # First frame, contains menu_fr and panel_fr (frames)
-menu_fr = None
-panel_fr = None
 
-# merging in Screen saver - HE Notify stuff
 device = None
-saver_running = False
-devFnt = None
-font1 = None
-font2 = None
-font3 = None
-stroke_fill = 'white'
-screen_width = None
-screen_height = None
-saver_cvs = None
-lnY = []
-screen_thread = None
-saver_thread = None
-scroll_thread = None
-textLines =[]
-devLns = 2
-firstLine = 0
-blank_minutes = 3
- 
+
 def do_quit():
   global mainwin
   mainwin.destroy()
   exit()
 
 def main():
-  global settings, hmqtt, log,  env_home, os_home, mq_thr, saver_running
-  global mainwin,menu_fr,alarm_btn,voice_btn,laser_btn,login_btn,logoff_btn
-  global mic_btn, mic_image, mic_muted,ranger_btn
-  global menu_fr, panel_fr, center_img, pnl_middle, message
-  global pnl_hdr, status_hdr, msg_hdr, content
+  global settings, hmqtt, log, device
   global device,saver_cvs,stroke_fill, screen_height, screen_width
-  global font1,font2,font3,devFnt, mic_imgs
   if sys.platform == 'darwin':
     isOSX = True
     print('Darwin not really supported')
@@ -77,7 +47,7 @@ def main():
   args = vars(ap.parse_args())
   
   # logging setup
-  log = logging.getLogger('tblogin')
+  log = logging.getLogger('notify')
   #applog.setLevel(args['log'])
   if args['syslog']:
     log.setLevel(logging.DEBUG)
@@ -88,12 +58,8 @@ def main():
     log.addHandler(handler)
   else:
     logging.basicConfig(level=logging.DEBUG,datefmt="%H:%M:%S",format='%(asctime)s %(levelname)-5s %(message)-40s')
-
-  env_home = os.getenv('HOME')
-  os_home = os.getcwd()
   
-  settings = Settings(args["conf"], 
-                      log)
+  settings = Settings(args["conf"], log)
   settings.print()
 
   try:
@@ -108,7 +74,6 @@ def main():
     device = Toplevel(tkroot)
     
     # Tkinter Window Configurations
-    #device.wait_visibility(saver_cvs)
     device.wm_attributes('-alpha',1)
     device.wm_attributes("-topmost", False)
     #device.overrideredirect(1)
@@ -174,10 +139,14 @@ def on_mqtt_msg(topic, payload):
       else:
         log.info("invalid command")
     elif setargs:
+      log.info(f"setargs is {setargs}")
       if setargs.get('font', False):
         device.set_font(setargs['font'])
-      elif setargs.get("stroke", False):
+      if setargs.get("stroke", False):
         device.set_stroke(setargs['stroke'])
+      if setargs.get('blank', False):
+        device.set_timeout(setargs['blank'])
+
   elif topic == settings.notetext_sub:
     device.display_text(payload)
 

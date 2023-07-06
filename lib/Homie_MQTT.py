@@ -50,7 +50,7 @@ class Homie_MQTT:
     global settings
     topic = message.topic
     payload = str(message.payload.decode("utf-8"))
-    self.log.debug("on_message %s %s" % (topic, payload))
+    #self.log.debug("on_message %s %s" % (topic, payload))
     cb_thr = Thread(target=self.callback, args=(topic,payload))
     cb_thr.start()
     
