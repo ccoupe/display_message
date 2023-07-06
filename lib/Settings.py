@@ -55,6 +55,9 @@ class Settings:
     self.deflt_font = conf.get('Default_Font', 1)
     self.stroke_fill = conf.get("stroke_fill", "white")
     self.fullscreen = conf.get("fullscreen", True)
+    #
+    self.luma_args = conf.get('luma_args', ['--display', 'sh1106'])
+
 
 
   def print(self):

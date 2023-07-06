@@ -1,6 +1,6 @@
-from tkinter import *
-from tkinter import ttk
-from tkinter import font
+#from tkinter import *
+#from tkinter import ttk
+#from tkinter import font
 #from PIL import Image, ImageTk
 import paho.mqtt.client as mqtt
 import sys
@@ -8,7 +8,7 @@ import json
 import time
 from lib.Settings import Settings
 from lib.Homie_MQTT import Homie_MQTT
-from lib.TkMessageDevice import TkMessageDevice
+#from lib.TkMessageDevice import TkMessageDevice
 #from lib.TurretSlider import TurretSlider
 import argparse
 import logging
