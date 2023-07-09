@@ -5,7 +5,7 @@ import json
 import time
 from lib.Settings import Settings
 from lib.Homie_MQTT import Homie_MQTT
-from lib.TkMessageDevice import TkMessageDevice
+from lib.LumaMessageDevice import LumaMessageDevice
 
 import argparse
 import logging
@@ -64,8 +64,8 @@ def main():
     exit()
 
   # create canvas 
-  device = TkMessageDevice(settings, tkwindow = None, tkclose = None,
-      args={"width": settings.width, "height": settings.height})
+  device = LumaMessageDevice(settings, tkwindow = None, tkclose = None,
+      args = None)
   log.info(f'starting mainloop')
     
   # NOTE: mqtt messages seem to arrive just fine. Even though we
@@ -73,7 +73,6 @@ def main():
   log.info('starting mqtt loop')
   mqtt_loop()
 
-  device.tk_loop()  #tkroot.mainloop()
   
   while True:
     time.sleep(10)

@@ -7,21 +7,30 @@ import time, threading, sched
 
 class TkMessageDevice:
   '''
-  Create a Tk top level window or accept one. Create a canvas and pack it
-  into the window.
+  Create a Tk top level window or accept one. The window can be created
+  fullscreen with the args {'fullscreen": True}
   
-  Settings argument is on object from lib/Settings 
+  A canvas will be created of the specified size (if not fullscreen) the canvas
+  will be pack'ed into the window.
+  
+  Settings argument is an object from lib/Settings which parse the json file
   
   message_device.display_text("text string") breaks the text into words 
   by whitespace and attempts to get the most number of words per line
   that will fit that line until the words are finished. It will the show
-  create those lines in the canvas. 
+  those lines in the canvas. If the number of words is less than or equal
+  to the number of lines on the display then the words are displayed on
+  individual lines. 
   
   If there are more lines to display that window/canvas space allows then
   it will scroll additional lines in every second.
+  
+  After 5 minutes of no new messages the canvas will be cleared.
+  There are some methods to change background and stroke colors and the
+  current 'font' (one out of three predetermined sizes).
   '''
 
-  def __init__(self, settings, window = None, args=None):
+  def __init__(self, settings, tkwindow = None, tkclose = None, args=None):
     self.log = settings.log
     self.devFnt = None
     self.devLnH = 16
@@ -37,35 +46,46 @@ class TkMessageDevice:
     self.devLns = None
     self.text_lines = []
     self.stroke_fill = ""       # color name
+    self.background = settings.background
     self.blank_minutes = 5
     self.scroll_thread = None
     self.saver_thread = None
     
-    if window is None:
+    if args.get('width', False):
+      self.screen_width = args['width']
+    else:
+      self.screen_width = settings.width
+    if args.get('height', False):
+      self.screen_height = args['height']
+    else:
+      self.screen_height = settings.height
+    
+    if tkwindow is None:
       self.tkroot = Tk()
-      self.device = Toplevel(tkroot)
+      self.device = self.tkroot #Toplevel(self.tkroot)
       
       # Tkinter Window Configurations
-      #device.wait_visibility(saver_cvs)
       self.device.wm_attributes('-alpha',1)
       self.device.wm_attributes("-topmost", False)
-      #device.overrideredirect(1)
-      self.device.attributes('-fullscreen', True)
+      if args.get('fullscreen',False):
+        self.device.attributes('-fullscreen', True)
+        self.screen_width = device.winfo_screenwidth()
+        self.screen_height = device.winfo_screenheight()
+      else:
+        self.screen_width = args.get('width', 200)
+        self.screen_height = args.get('height', 120)
+        self.device.geometry(f"{self.screen_width}x{self.screen_height}")   
       self.device.attributes("-zoomed", True)
-      #device.attributes("-toolwindow", 1)
-      self.screen_width = device.winfo_screenwidth()
-      self.screen_height = device.winfo_screenheight()
+      self.device.state('normal')
     else:
-      self.device = window
-      self.screen_width = args.get('width', 200)
-      self.screen_height = args.get('height', 120)
-      self.log.info(f"Test Window of {self.screen_width}X{self.screen_height}")
-  
+      self.device = tkwindow
+      self.log.info(f"Creating Child Window {self.screen_width}X{self.screen_height}")
+      
     # create canvas 
-    self.canvas = Canvas(self.device, background='black', borderwidth = 0)
-    self.canvas.create_rectangle(0, 0, self.screen_width, self.screen_height, fill = 'black')
+    self.canvas = Canvas(self.device, background=self.background, borderwidth = 0)
+    self.canvas.create_rectangle(0, 0, self.screen_width, self.screen_height,
+        fill = self.background)
     self.canvas.pack(expand="yes",fill="both")
-    
     
     # Fonts and measurements
     self.font1 = font.Font(family=settings.font1, size=settings.font1sz[0])
@@ -80,11 +100,23 @@ class TkMessageDevice:
         device.bind_all(seq, saver_closing)
 
     self.device.state('normal')
+    
+    if tkclose is not None:
+      self.tkclose = tkclose
+    else:
+      self.tkclose = self.our_close
+    self.device.protocol("WM_DELETE_WINDOW", self.tkclose)
+
+
     self.log.info("Leaving __init__")
     
   # 
   # ----------------- Visible (public)
   #
+  
+  def tk_loop(self):
+    self.tkroot.mainloop()
+    
   def display_text(self, message):
     # called with mqtt payload (a string of text)
     #log.info(f"display_text {payload}")
@@ -125,8 +157,9 @@ class TkMessageDevice:
       lns = 2
     fw = int(self.devFnt.measure('MWTH') / 4)
     lw = fw * 8;
-    self.viewPortW = min(self.screen_width,lw)     # anything larger may cause a new line
-    self.log.info(f"fw: {fw} self.viewPortW: {self.viewPortW}")
+    # anything larger than viewPortW, *may* cause a new line.
+    self.viewPortW = min(self.screen_width,lw)
+    #self.log.info(f"fw: {fw} self.viewPortW: {self.viewPortW}")
     vh = (lns * self.devLnH) 
     yp = (self.screen_height-vh)/2
     # array of line positions
@@ -134,20 +167,31 @@ class TkMessageDevice:
       self.lnY.append(yp)
       yp += self.devLnH
     self.devLns = lns  # number of lines on screen. Fixed by font choice. 
-    self.log.info(f' {self.devLnH} {self.screen_width} X {self.screen_height}')
+    #self.log.info(f' {self.devLnH} {self.screen_width} X {self.screen_height}')
     self.log.info(f'lnY: {self.lnY}')
     
   def set_stroke(self, color_str):
     self.log.info(f"Setting stroke to {color_str}")
     self.stroke_fill = color_str
-  
+    
+  def set_background(self, color_str):
+    self.log.info(f'Setting background to {color_str}')
+    self.background = color_str
+    self.canvas.configure(background=self.background)
+    
   def set_timeout(self, tmo):
     self.log.info(f"Setting blank time to {tmo}")
     self.blank_minutes = int(tmo)
     
   # --------- Private methods below ----------------------
+  
+  def our_close(self):
+    self.log.info("Destroy Window")
+    self.tkroot.destroy()
+    exit()
       
   def layoutLines(self, nln, nwd, words):
+    # TODO: we don't need it to return anything.  
     # returns True if we need to scroll 
     self.textLines.clear()
     #log.info(f'layoutLines nln: {nln}, nwd: {nwd}, words: {words}')

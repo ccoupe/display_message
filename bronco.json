@@ -11,6 +11,9 @@
     "font2sz": [56,48],
     "font3sz": [40,24],
     "stroke_fill": "white",
+    "background": "black",
     "Default_Font": 1,
-    "fullscreen": false
+    "fullscreen": false,
+    "width": 480,
+    "height": 320
 }

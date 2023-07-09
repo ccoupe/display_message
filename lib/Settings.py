@@ -54,9 +54,12 @@ class Settings:
     self.font3sz = conf.get('font3sz', [8,16])
     self.deflt_font = conf.get('Default_Font', 1)
     self.stroke_fill = conf.get("stroke_fill", "white")
+    self.background = conf.get('background', "black")
     self.fullscreen = conf.get("fullscreen", True)
     #
     self.luma_args = conf.get('luma_args', ['--display', 'sh1106'])
+    self.width = conf.get('width', None)
+    self.height = conf.get('height', None)
 
 
 
@@ -81,6 +84,12 @@ class Settings:
     st['font3sz'] = self.font3sz
     st['Default_Font'] = self.deflt_font
     st['stroke_fill'] = self.stroke_fill
+    st['background'] = self.background
+    st['fullscreen'] = self.fullscreen
+    st['width'] = self.width
+    st['height'] = self.height
+    st['luma_args'] = self.luma_args
+    
     str = json.dumps(st)
     return str
 
