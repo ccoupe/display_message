@@ -1,0 +1,10 @@
+[Unit]
+Description="MQTT Display Messages"
+[Service]
+Environment=DISPLAY=:0.0
+Environment=XAUTHORITY=/home/ccoupe/.Xauthority
+ExecStart=/usr/local/lib/mqttnotify/dpytk.sh
+Restart=on-abort
+
+[Install]
+WantedBy=multi-user.target

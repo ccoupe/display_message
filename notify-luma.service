@@ -3,7 +3,7 @@ Description="MQTT Display Messages"
 [Service]
 Environment=DISPLAY=:0.0
 Environment=XAUTHORITY=/home/ccoupe/.Xauthority
-ExecStart=/home/ccoupe/Projects/iot/dpymsg/dpymsg.sh
+ExecStart=/usr/local/lib/mqttnotify/dpyluma.sh
 Restart=on-abort
 
 [Install]
