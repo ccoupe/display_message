@@ -71,6 +71,7 @@ def main():
   # NOTE: mqtt messages seem to arrive just fine. Even though we
   # don't seem to accomodate them
   log.info('starting mqtt loop')
+  hmqtt.enable = True
   mqtt_loop()
 
   

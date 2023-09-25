@@ -1,3 +1,18 @@
+------- LumaMessageDevice -------
+SPI vs I2C vs Parallel - The sh1106 is i2c. The ili9846 (480x320) is SPI
+and appears to use the 'normal' pi pins 
+
+
+Wire up the Hosyond
+  sudo usermod -a -G spi,gpio,i2c ccoupe
+  
+See if we get anything from the examples.
+Update lib/LumaMessageDevice.py
+
+It should work. Unless both Pi3's have bad gpio's - possible I guess
+wire up the pi0 or the pi4 or ...
+
+------- TkMessageDevice ---------
 This is not a real screen saver. It's a [full screen] app.
 ~/Projects/iot/dpymsg - dpymac2.local - pi3 + hysond 480x320 screen
 while waiting for the 640x480 waveshare screen to be repaired/replaced

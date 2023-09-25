@@ -50,6 +50,9 @@ class Homie_MQTT:
     global settings
     topic = message.topic
     payload = str(message.payload.decode("utf-8"))
+    if self.enable == False:
+        self.log.debug(f'ignore message at startup: {message}')
+        return
     #self.log.debug("on_message %s %s" % (topic, payload))
     cb_thr = Thread(target=self.callback, args=(topic,payload))
     cb_thr.start()

@@ -32,7 +32,7 @@ class Settings:
       self.macAddr = "de:ad:be:ef"
     self.macAddr = self.macAddr.upper()
     # default config  ~/.trumpybear
-    self.db_path = os.path.join(os.getenv('HOME'),'.trumpybear')
+    #self.db_path = os.path.join(os.getenv('HOME'),'.trumpybear')
     self.load_settings(self.etcfname)
     self.status_topic = 'homie/'+self.homie_device+'/control/cmd'
     self.log.info("Settings from %s" % self.etcfname)
