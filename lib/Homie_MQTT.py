@@ -5,8 +5,9 @@ import json
 from datetime import datetime
 import time
 from threading import Thread
+from socket import gaierror
+import random
 
-import time
 
 class Homie_MQTT:
 
@@ -16,7 +17,7 @@ class Homie_MQTT:
     self.callback = callback
     
     # init server connection
-    self.client = mqtt.Client(settings.mqtt_client_name, False)
+    self.client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1,settings.mqtt_client_name, False)
     #self.client.max_queued_messages_set(3)
     hdevice = self.hdevice = self.settings.homie_device  # "device_name"
     hlname = self.hlname = self.settings.homie_name     # "Display Name"
@@ -53,7 +54,7 @@ class Homie_MQTT:
     if self.enable == False:
         self.log.debug(f'ignore message at startup: {message}')
         return
-    #self.log.debug("on_message %s %s" % (topic, payload))
+    self.log.debug("on_message %s %s" % (topic, payload))
     cb_thr = Thread(target=self.callback, args=(topic,payload))
     cb_thr.start()
     
@@ -76,7 +77,15 @@ class Homie_MQTT:
        
   def on_disconnect(self, client, userdata, rc):
     self.mqtt_connected = False
-    self.log.debug("mqtt reconnecting")
-    self.client.reconnect()
-      
+    if rc != 0:
+      while True:
+        tm = random.randint(30,90)
+        self.log.warning(f"mqtt disconnect: {rc}, attempting reconnect in {tm} seconds")
+        time.sleep(tm)
+        try:
+          self.client.reconnect()
+          # if success, break out of the loop
+          break
+        except gaierror as e:
+          continue
 

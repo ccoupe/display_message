@@ -1,0 +1,13 @@
+{
+  "mqtt_server_ip": "stoic.local",
+  "mqtt_port": 1883,
+  "mqtt_client_name": "pi5_notify",
+  "homie_device": "pi5_notify",
+  "font1": "DejaVuSans",
+  "font1sz": [24 ,32],
+  "font2sz": [16,24],
+  "font3sz": [8,12],
+  "stroke_fill": "white",
+  "Default_Font": 1,
+  "luma_arg": [ "--display", "sh1106"]
+}

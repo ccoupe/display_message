@@ -117,6 +117,8 @@ def on_mqtt_msg(topic, payload):
         device.set_background(setargs['background'])
   elif topic == settings.notetext_sub:
     device.display_text(payload)
+  else:
+    log.warning(f"topic does not match: |{topic}|")
 
 
 

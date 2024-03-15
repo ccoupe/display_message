@@ -148,7 +148,7 @@ class LumaMessageDevice:
       if nwd <= nln:
           y = 0
           for wd in words:
-            self.log.info(f"check width of {wd} with {self.devFnt}")
+            #self.log.info(f"check width of {wd} with {self.devFnt}")
             wid = draw.textlength(wd, font=self.devFnt)
             lns.append(wd)
             y += self.devLnH

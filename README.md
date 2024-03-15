@@ -1,3 +1,17 @@
+## Install
+  on the device (node), go to the mounted directory Projects/iot/dpymsg
+  and 'make install"
+  
+### Create a Python virtual environment
+pip -m venc dpyluma
+
+pip insall paho-mqtt
+pip install luma-core
+pip install luma-oled  # for sh1106
+pip install times
+
+Edit dpyluma.sh to source that environment
+
 ------- LumaMessageDevice -------
 SPI vs I2C vs Parallel - The sh1106 is i2c. The ili9846 (480x320) is SPI
 and appears to use the 'normal' pi pins 
