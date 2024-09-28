@@ -158,7 +158,7 @@ class LumaMessageDevice:
         y = 0
         for wd in words:
           w = draw.textlength(' '+wd, font=self.devFnt)
-          if (wid + w) > self.device.width:
+          if (wid + w) > self.device.width+1:  # fix Luma bug?
             lns.append(ln)
             wid = 0
             ln = ""
